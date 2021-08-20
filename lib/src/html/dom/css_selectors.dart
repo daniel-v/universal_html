@@ -58,6 +58,50 @@ bool _matches(Element element, String selector, String? pseudoElement) {
   return _matchesSelectorGroup(element, selectorGroup, null);
 }
 
+bool _matchesNthOfTypeSelector(
+    Element element, css.PseudoClassFunctionSelector selector) {
+  // Get arguments
+  final expressions = (selector.argument as css.SelectorExpression).expressions;
+
+  var index = 0;
+  Element? sibling = element;
+  while (sibling != null) {
+    if (sibling.tagName == element.tagName) index++;
+    sibling = sibling.previousElementSibling;
+  }
+
+  switch (expressions.length) {
+    case 1:
+      //
+      // :nth-of-type(3) | :nth-of-type(even) | :nth-of-type(odd)
+      //
+      final term0 = expressions[0];
+      if (term0 is css.NumberTerm) {
+        //
+        // :nth-of-type(3)
+        //
+        final expectedIndex = (term0.value as num).toInt();
+        return expectedIndex == index;
+      } else if (term0 is css.LiteralTerm) {
+        switch (term0.text) {
+          case 'even':
+            //
+            // :nth-of-type(even)
+            //
+            return index % 2 == 0;
+          case 'odd':
+            //
+            // :nth-of-type(odd)
+            //
+            return index % 2 == 1;
+        }
+      }
+      throw _UnsupportedCssSelectorException(selector.span!.text);
+    default:
+      throw _UnsupportedCssSelectorException(selector.span!.text);
+  }
+}
+
 bool _matchesNthChildSelector(
     Element element, css.PseudoClassFunctionSelector selector) {
   // Find index of this node
@@ -304,6 +348,12 @@ bool _matchesSimpleSelector(
             element.previousElementSibling == null;
       case 'root':
         return element is HtmlHtmlElement;
+      case 'nth-of-type':
+        if (selector is css.PseudoClassFunctionSelector) {
+          return _matchesNthOfTypeSelector(element, selector);
+        } else {
+          throw ArgumentError(selector);
+        }
       case 'nth-child':
         if (selector is css.PseudoClassFunctionSelector) {
           return _matchesNthChildSelector(element, selector);

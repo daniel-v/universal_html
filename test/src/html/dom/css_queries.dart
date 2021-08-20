@@ -127,6 +127,50 @@ void _testCss() {
         expectMatches(e.childNodes[2] as Element, ':nth-child(2n+1)', isTrue);
         expectMatches(e.childNodes[3] as Element, ':nth-child(2n+1)', isFalse);
       });
+      test(':nth-of-type(even)', () {
+        final e = DivElement()
+          ..id = 'root'
+          ..append(DivElement()..id = 'child0')
+          ..append(SpanElement()..id = 'child1')
+          ..append(DivElement()..id = 'child2')
+          ..append(DivElement()..id = 'child3')
+          ..append(DivElement()..id = 'child4');
+        print(e.outerHtml);
+        expectMatches(e.childNodes[0] as Element, ':nth-of-type(even)', isFalse);
+        expectMatches(e.childNodes[1] as Element, ':nth-of-type(even)',isFalse);
+        expectMatches(e.childNodes[2] as Element, ':nth-of-type(even)', isTrue);
+        expectMatches(e.childNodes[3] as Element, ':nth-of-type(even)', isFalse);
+        expectMatches(e.childNodes[4] as Element, ':nth-of-type(even)', isTrue);
+      });
+      test(':nth-of-type(odd)', () {
+        final e = DivElement()
+          ..id = 'root'
+          ..append(DivElement()..id = 'child0')
+          ..append(SpanElement()..id = 'child1')
+          ..append(DivElement()..id = 'child2')
+          ..append(DivElement()..id = 'child3')
+          ..append(DivElement()..id = 'child4');
+        print(e.outerHtml);
+        expectMatches(e.childNodes[0] as Element, ':nth-of-type(odd)', isTrue);
+        expectMatches(e.childNodes[1] as Element, ':nth-of-type(odd)',isTrue);
+        expectMatches(e.childNodes[2] as Element, ':nth-of-type(odd)', isFalse);
+        expectMatches(e.childNodes[3] as Element, ':nth-of-type(odd)', isTrue);
+        expectMatches(e.childNodes[4] as Element, ':nth-of-type(odd)', isFalse);
+      });
+      test(':nth-of-type(2)', () {
+        final e = DivElement()
+          ..id = 'root'
+          ..append(DivElement()..id = 'child0')
+          ..append(SpanElement()..id = 'child1')
+          ..append(DivElement()..id = 'child2')
+          ..append(DivElement()..id = 'child3')
+          ..append(DivElement()..id = 'child4');
+        expectMatches(e.childNodes[0] as Element, ':nth-of-type(2)', isFalse);
+        expectMatches(e.childNodes[1] as Element, ':nth-of-type(2)', isFalse);
+        expectMatches(e.childNodes[2] as Element, ':nth-of-type(2)', isTrue);
+        expectMatches(e.childNodes[3] as Element, ':nth-of-type(2)', isFalse);
+        expectMatches(e.childNodes[4] as Element, ':nth-of-type(2)', isFalse);
+      });
       test('[name]', () {
         final e = DivElement()..setAttribute('k', '');
         expectMatches(e, '[k]', isTrue);
